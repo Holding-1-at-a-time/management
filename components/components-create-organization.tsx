@@ -13,7 +13,7 @@ export function CreateOrganization() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user) {
 
     try {
       await createOrganization({ name, ownerId: user.id });

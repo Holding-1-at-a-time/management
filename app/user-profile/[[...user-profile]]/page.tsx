@@ -1,12 +1,15 @@
 "use client";
 
 import { api } from "@/convex/_generated/api";
-import { UserProfile } from "@clerk/nextjs";
+import { UserProfile, useUser } from "@clerk/nextjs";
 import { useQuery, useMutation } from "convex/react";
 import { useState } from 'react';
 
 export default function UserProfilePage() {
-    const user = useQuery(api.users.getUser, { userId: "current-user-id" }); // Replace with actual user ID
+    const { user } = useUser(); // Retrieve the current user
+    const userId = user ? user.id : null; // Get the user ID if available
+
+    const userProfile = useQuery(api.users.getUser, { userId }); // Use the dynamic user ID
     const updateProfile = useMutation(api.users.updateUserProfile);
     const [phoneNumber, setPhoneNumber] = useState<string | undefined>(user?.phone || undefined);
     const [updateSuccess, setUpdateSuccess] = useState(false);
@@ -21,11 +24,19 @@ export default function UserProfilePage() {
             await updateProfile({ userId: "current-user-id", phoneNumber });
             setUpdateSuccess(true);
         } catch (error) {
+            setUpdateError(new Error("Failed to update profile. Please try again."));
+            console.error("Profile update error:", error);
+        }
+
+        try {
+            await updateProfile({ userId: "current-user-id", phoneNumber });
+            setUpdateSuccess(true);
+        } catch (error) {
             console.error("Failed to update profile:", error);
             setUpdateError(error as Error);
             }
         }
-    };
+    }
 
     return (
         <div className="container mx-auto py-10">
