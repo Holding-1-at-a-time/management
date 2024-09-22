@@ -15,19 +15,20 @@
     "convex": "^1.16.2",
     "lucide-react": "^0.445.0",
     "next": "15.0.0-rc.0",
-    "react": "19.0.0-rc-f994737d14-20240522",
-    "react-dom": "19.0.0-rc-f994737d14-20240522",
+    "react": "19.0.0-rc-e4953922-20240919",
+    "react-dom": "19.0.0-rc-e4953922-20240919",
     "tailwind-merge": "^2.5.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "tslib": "2.7.0"
   },
   "devDependencies": {
     "@types/node": "^22",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "eslint": "^8",
+    "@types/react": "^18.3.8",
+    "@types/react-dom": "^18.3.0",
+    "eslint": "^9.11.0",
     "eslint-config-next": "15.0.0-rc.0",
     "postcss": "^8",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "tailwindcss": "^3.4.12",
+    "typescript": "^5.6.2"
   }
 }
