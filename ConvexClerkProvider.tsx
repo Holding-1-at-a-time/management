@@ -8,12 +8,19 @@ import React, { ReactNode } from "react";
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL as string);
 const ConvexClerkProvider = ({ children }: { children: ReactNode }) => {
   const client = React.useMemo(() => new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL as string), []);
-return (
-  <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY as string}>
-    <ConvexProviderWithClerk client={client} useAuth={useAuth}>
-      {children}
-    </ConvexProviderWithClerk>
-  </ClerkProvider>
-);
+  return (
+    <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY as string}
+      appearance={{
+        layout: {
+          animations: true,
+          shimmer: true,
+        }
+      }}
+    >
+      <ConvexProviderWithClerk client={client} useAuth={useAuth}>
+        {children}
+      </ConvexProviderWithClerk>
+    </ClerkProvider>
+  );
 };
 export default ConvexClerkProvider;
