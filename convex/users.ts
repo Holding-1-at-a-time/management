@@ -86,6 +86,9 @@ export const getUser = query({
             throw new Error("User not found");
         }
         console.log(`getUser: found user ${user._id}`);
+        if (!user) {
+            throw new Error("User not found");
+        }
         return user;
     },
 });
