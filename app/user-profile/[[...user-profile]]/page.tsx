@@ -9,14 +9,21 @@ export default function UserProfilePage() {
     const user = useQuery(api.users.getUser, { userId: "current-user-id" }); // Replace with actual user ID
     const updateProfile = useMutation(api.users.updateUserProfile);
     const [phoneNumber, setPhoneNumber] = useState<string | undefined>(user?.phone || undefined);
+    const [updateSuccess, setUpdateSuccess] = useState(false);
+    const [updateError, setUpdateError] = useState<Error | null>(null);
+
     const handleUpdateProfile = async (e: React.FormEvent) => {
         e.preventDefault();
+        setUpdateSuccess(false);
+        setUpdateError(null);
+
         try {
             await updateProfile({ userId: "current-user-id", phoneNumber });
-            // Show success message
+            setUpdateSuccess(true);
         } catch (error) {
             console.error("Failed to update profile:", error);
-            // Show error message
+            setUpdateError(error as Error);
+            }
         }
     };
 
@@ -39,7 +46,20 @@ export default function UserProfilePage() {
                 <button type="submit" className="bg-blue-500 text-white p-2 rounded">
                     Update Profile
                 </button>
+
+                {updateSuccess && (
+                    <div className="text-green-500 mt-2">
+                        Profile updated successfully!
+                    </div>
+                )}
+
+                {updateError && (
+                    <div className="text-red-500 mt-2">
+                        {updateError.message}
+                    </div>
+                )}
             </form>
         </div>
     );
 }
+
