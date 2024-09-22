@@ -1,3 +1,5 @@
+[![CodeQL Advanced](https://github.com/Holding-1-at-a-time/management/actions/workflows/codeql.yml/badge.svg)](https://github.com/Holding-1-at-a-time/management/actions/workflows/codeql.yml)
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/create-next-app).
 
 ## Getting Started
