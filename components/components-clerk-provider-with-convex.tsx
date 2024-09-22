@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { api } from "../convex/_generated/api";
 import { useAction } from "convex/react";
 
-export function ClerkProviderWithConvex({ children }: { children: React.ReactNode }) {
+export function ClerkProviderWithConvex({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <ClerkProvider>
       <ConvexProviderWithClerk client={convexClient} useAuth={useConvexAuth}>
@@ -17,7 +17,7 @@ export function ClerkProviderWithConvex({ children }: { children: React.ReactNod
   );
 }
 
-function ConvexUserCreator({ children }: { children: React.ReactNode }) {
+function ConvexUserCreator({ children }: Readonly<{ children: React.ReactNode }>) {
   const { isAuthenticated, user } = useConvexAuth();
   const createUser = useAction(api.users.createUser);
 
