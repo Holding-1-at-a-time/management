@@ -1,0 +1,24 @@
+import { defineSchema, defineTable } from "convex/server";
+import { v } from "convex/values";
+
+export default defineSchema({
+    users: defineTable({
+        email: v.string(),
+        firstName: v.string(),
+        lastName: v.string(),
+        clerkId: v.string(),
+    }).index("by_clerk_id", ["clerkId"]),
+
+    organizations: defineTable({
+        name: v.string(),
+        ownerId: v.string(),
+    })
+
+    .index("by_owner", ["ownerId"]),
+
+    organizationMembers: defineTable({
+        userId: v.string(),
+        organizationId: v.id("organizations"),
+        role: v.union(v.literal("owner"), v.literal("admin"), v.literal("member")),
+    }).index("by_user", ["userId"]).index("by_organization", ["organizationId"]),
+});
