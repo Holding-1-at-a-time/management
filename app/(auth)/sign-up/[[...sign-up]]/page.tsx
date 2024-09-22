@@ -1,12 +1,10 @@
-"use client";
-
-import React, { Suspense } from 'react';
+import React from 'react';
 import { SignUp } from '@clerk/nextjs';
 
 const Page = () => (
-    <Suspense fallback={<div>Loading...</div>}>
+    <div>
         <SignUp />
-    </Suspense>
+    </div>
 );
 
 export default Page;

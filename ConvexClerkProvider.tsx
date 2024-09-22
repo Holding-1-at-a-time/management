@@ -1,21 +1,31 @@
-import React from "react";
+"use client";
+
 import { ClerkProvider, useAuth } from "@clerk/nextjs";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { ConvexReactClient } from "convex/react";
+import { ReactNode } from "react";
 
-const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
-if (!convexUrl) {
-    console.error('NEXT_PUBLIC_CONVEX_URL environment variable is not set');
-    throw new Error('NEXT_PUBLIC_CONVEX_URL environment variable is not set');
-}
-const ConvexClerkProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    console.log('Rendering ConvexClerkProvider');
-    return (
-        <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY as string}>
-            <ConvexProviderWithClerk client={new ConvexReactClient(convexUrl)} useAuth={useAuth}>
-                {children}
-            </ConvexProviderWithClerk>
-        </ClerkProvider>
-    );
-};
+
+const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL as string);
+
+const ConvexClerkProvider = ({ children }: { children: ReactNode }) => (
+  <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY as string} appearance={{
+    layout: {
+      socialButtonsVariant: 'iconButton',
+      logoImageUrl: '/icons/auth-logo.svg'
+    },
+    variables: {
+      colorBackground: '#15171c',
+      colorPrimary: '',
+      colorText: 'white',
+      colorInputBackground: '#1b1f29',
+      colorInputText: 'white',
+    }
+  }}>
+    <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
+      {children}
+    </ConvexProviderWithClerk>
+  </ClerkProvider>
+);
+
 export default ConvexClerkProvider;
