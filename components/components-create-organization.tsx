@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useAction } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { useUser } from "@clerk/nextjs";
+import { CreateOrganization } from "clerk/nextjs";
 
 export function CreateOrganization() {
   const [name, setName] = useState("");
@@ -38,8 +39,8 @@ export function CreateOrganization() {
         type="submit"
         className="w-full px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
       >
-        Create Organization
-      </button>
+        <CreateOrganization />
+        </button>
     </form>
   );
 }
