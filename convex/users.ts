@@ -3,7 +3,16 @@ import { v } from "convex/values";
 
 
 export const store = mutation({
-    args: {},
+    args: {
+        tokenIdentifier: v.string(),
+        name: v.string(),
+        email: v.string(),
+        firstName: v.string(),
+        lastName: v.string(),
+        clerkId: v.string(),
+        token: v.string(),
+        userId: v.id("users"),
+    },
     handler: async (ctx) => {
         const identity = await ctx.auth.getUserIdentity();
         if (!identity) {
@@ -37,7 +46,6 @@ export const store = mutation({
             lastName: "",
             clerkId: ""
         };
-
         return await ctx.db.insert("users", userData);
     },
 });
