@@ -14,6 +14,8 @@ export function CreateOrganization() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
+      return;
+    }
 
     try {
       await createOrganization({ name, ownerId: user.id });
@@ -35,12 +37,6 @@ export function CreateOrganization() {
         className="w-full px-3 py-2 border rounded"
         required
       />
-      <button
-        type="submit"
-        className="w-full px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
-      >
-        <CreateOrganization />
-        </button>
-    </form>
-  );
-}
+
+
+        Create Organization
