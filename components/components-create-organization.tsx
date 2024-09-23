@@ -1,3 +1,15 @@
+/**
+    * @description      : 
+    * @author           : rrome
+    * @group            : 
+    * @created          : 23/09/2024 - 09:58:46
+    * 
+    * MODIFICATION LOG
+    * - Version         : 1.0.0
+    * - Date            : 23/09/2024
+    * - Author          : rrome
+    * - Modification    : 
+**/
 'use client'
 
 import { useState } from "react";
@@ -15,32 +27,33 @@ export function CreateOrganization() {
     e.preventDefault();
     if (!user) {
 
-    try {
-      await createOrganization({ name, ownerId: user.id });
-      setName("");
-      alert("Organization created successfully!");
-    } catch (error) {
-      console.error("Failed to create organization:", error);
-      alert("Failed to create organization. Please try again.");
-    }
-  };
+      try {
+        await createOrganization({ name, ownerId: user.id });
+        setName("");
+        alert("Organization created successfully!");
+      } catch (error) {
+        console.error("Failed to create organization:", error);
+        alert("Failed to create organization. Please try again.");
+      }
+    };
 
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <input
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Organization Name"
-        className="w-full px-3 py-2 border rounded"
-        required
-      />
-      <button
-        type="submit"
-        className="w-full px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
-      >
-        <CreateOrganization />
+    return (
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Organization Name"
+          className="w-full px-3 py-2 border rounded"
+          required
+        />
+        <button
+          type="submit"
+          className="w-full px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+        >
+          Create Organization
         </button>
-    </form>
-  );
-}
+      </form>
+    );
+  }
+};
