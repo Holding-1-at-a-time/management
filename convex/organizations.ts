@@ -17,7 +17,6 @@ import { AppError } from "../lib/errors";
 import logger from "../lib/logger";
 import { ROLES, PERMISSIONS } from "../utils/auth";
 import { Organization } from "@clerk/nextjs/server";
-
 /**
  * Creates a new organization.
  *
@@ -48,46 +47,85 @@ export const createOrganization = mutation({
         image: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
-        try {
-            const existingOrg = await ctx.db
-                .query("organizations")
-                .withIndex("by_slug", (q) => q.eq("slug", args.slug))
-                .unique();
-
-            if (existingOrg) {
-                throw new AppError("Organization with this slug already exists", 400);
-            }
-
-            const organizationId = await ctx.db.insert("organizations", {
-                name: args.name,
-                slug: args.slug,
-                ownerId: args.ownerId,
-                image: args.image,
-            });
-
-            await ctx.db.insert("memberships", {
-                userId: args.ownerId,
-                organizationId,
-                role: ROLES.ADMIN_CREATOR,
-                permissions: Object.values(PERMISSIONS),
-            });
-
-            logger.info({ organizationId, ownerId: args.ownerId }, "Organization created");
-
-            await ctx.db.insert("auditLogs", {
-                userId: args.ownerId,
-                action: "ORGANIZATION_CREATED",
-                details: `Organization ${args.name} created`,
-                timestamp: new Date().toISOString(),
-            });
-
-            return organizationId;
-        } catch (error) {
-            logger.error({ error, args }, "Error creating organization");
-            throw error;
-        }
+        const { name, slug, ownerId, image } = args;
+        return await createOrganizationInternal(ctx, name, slug, ownerId, image);
     },
 });
+
+/**
+ * Creates a new organization.
+ *
+ * @mutation
+ * @param {Object} args - The arguments for creating an organization.
+ * @param {string} args.name - The name of the organization.
+ * @param {string} args.slug - The unique slug for the organization.
+ * @param {string} args.ownerId - The ID of the owner of the organization.
+ * @param {string} [args.image] - Optional image URL for the organization.
+ * @returns {Promise<string>} The ID of the newly created organization.
+ * @throws {AppError} If an organization with the given slug already exists.
+ * @throws {Error} If there is an error during the creation process.
+ */
+export const createOrganizationInternal = async (
+    ctx: any,
+        name: string,
+        slug: string,
+        ownerId: string,
+        image?: string
+) => {
+    await checkIfOrganizationExists(ctx, slug);
+    const organization = await insertOrganization(ctx, name, slug, ownerId, image);
+
+    await logOrganizationCreation(ctx, organization, args.ownerId, args.name);
+
+    return organization;
+    };
+
+export const checkIfOrganizationExists =  (
+    args: {
+        ctx: any;
+        org_Slug: v.string(),
+        
+        
+    
+    }
+    const existingOrg = await ctx.db
+        .query("organizations")
+        .withIndex("by_slug", (q) => q.eq("slug", slug))
+        .unique();
+
+    if (existingOrg) {
+        throw new AppError("Organization with this slug already exists", 400);
+    }
+}
+
+async function insertOrganization(ctx, name, slug, ownerId, image) {
+    return await ctx.db.insert("organizations", {
+        name,
+        slug,
+        ownerId,
+        image,
+    });
+}
+
+async function insertMembership(ctx, ownerId, organizationId) {
+    await ctx.db.insert("memberships", {
+        userId: ownerId,
+        organizationId,
+        role: ROLES.ADMIN_CREATOR,
+        permissions: Object.values(PERMISSIONS),
+    });
+}
+
+async function logOrganizationCreation(ctx, organizationId, ownerId, name) {
+    logger.info({ organizationId, ownerId }, "Organization created");
+
+    await ctx.db.insert("auditLogs", {
+        userId: ownerId,
+        action: "ORGANIZATION_CREATED",
+        details: `Organization ${name} created`,
+        timestamp: new Date().toISOString(),
+    });
+}
 
 export const getOrganization = query({
     args: { slug: v.string() },
@@ -124,7 +162,8 @@ export const listOrganizations = query({
                 organizationIds.map((id) => ctx.db.get(id))
             );
 
-return organizations.filter((org: Organization | null): org is NonNullable<Organization> => org !== null);        } catch (error) {
+            return organizations.filter((org: Organization | null): org is NonNullable<Organization> => org !== null);
+        } catch (error) {
             logger.error({ error, userId: args.userId }, "Error listing organizations");
             throw new AppError("Failed to list organizations", 500);
         }
