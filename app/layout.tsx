@@ -12,6 +12,7 @@
 **/
 
 import ConvexClerkProvider from "@/ConvexClerkProvider";
+import { auth } from '@clerk/nextjs/server'
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
@@ -47,30 +48,37 @@ export const metadata: Metadata = {
  * 
  * @param children - The child components to be rendered within the layout.
  */
+
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { orgId } = auth();
+  const hasActiveOrganization = !!orgId;
+
+
+
   return (
     <ClerkProviderWithConvex>
-        <html lang="en">
-          <body className={`${geistSans.variable} ${geistMono.variable}`}>
-            <header>
-              <SignedOut>
-                <SignInButton />
-              </SignedOut>
-              <SignedIn>
-                <UserButton />
-              </SignedIn>
-            </header>
-            <main>
-              <ConvexClerkProvider>
-                {children}
-              </ConvexClerkProvider>
-              </main>
-          </body>
-        </html>
+      <html lang="en">
+        <body className={`${geistSans.variable} ${geistMono.variable}`}>
+          <header>
+            <SignedOut>
+              <SignInButton />
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+          </header>
+          <main>
+            <ConvexClerkProvider>
+              {children}
+            </ConvexClerkProvider>
+          </main>
+        </body>
+      </html>
     </ClerkProviderWithConvex>
   );
 };
