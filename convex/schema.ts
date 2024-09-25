@@ -14,6 +14,19 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
+/**
+ * Defines the schema for the management application.
+ * 
+ * This schema includes the following tables:
+ * 
+ * - `users`: Stores user information including clerk ID, email, first name, last name, phone number, email verification status, phone verification status, two-factor authentication status, and the last updated timestamp. Indexed by `clerkId` and `email`.
+ * 
+ * - `organizations`: Stores organization information including name, slug, image, and owner ID. Indexed by `slug`.
+ * 
+ * - `memberships`: Stores membership information linking users to organizations, including user ID, organization ID, role, and permissions. Indexed by `userId` and `organizationId`.
+ * 
+ * - `auditLogs`: Stores audit logs including user ID, action performed, details of the action, and timestamp. Indexed by `userId`.
+ */
 export default defineSchema({
     users: defineTable({
         clerkId: v.string(),

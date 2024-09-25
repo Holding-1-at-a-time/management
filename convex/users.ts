@@ -2,7 +2,7 @@
     * @description      : 
     * @author           : rrome
     * @group            : 
-    * @created          : 25/09/2024 - 12:04:58
+    * @created          : 25/09/2024 - 13:32:37
     * 
     * MODIFICATION LOG
     * - Version         : 1.0.0
@@ -13,9 +13,9 @@
 // convex/users.ts
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { ConvexError } from "convex/values";
-import { JWTPayload } from "../types/jwt";
-import { logAction } from "./auditLogs";
+import { AppError } from "@/lib/errors";
+import logger from "../lib/logger";
+import { JWTPayload } from "@/types/jwt";
 
 export const createOrUpdateUser = mutation({
     args: {
@@ -44,65 +44,66 @@ export const createOrUpdateUser = mutation({
     },
     handler: async (ctx, args) => {
         const jwt = args.jwt;
-        const existingUser = await ctx.db
-            .query("users")
-            .withIndex("by_clerk_id", (q) => q.eq("clerkId", jwt.clerk_user_id))
-            .unique();
+        try {
+            const existingUser = await ctx.db
+                .query("users")
+                .withIndex("by_clerk_id", (q) => q.eq("clerkId", jwt.clerk_user_id))
+                .unique();
 
-        const userData = {
-            clerkId: jwt.clerk_user_id,
-            email: jwt.email,
-            firstName: jwt.first_name,
-            lastName: jwt.name.split(" ").slice(1).join(" "),
-            phoneNumber: jwt.phone_number,
-            emailVerified: jwt.email_verified,
-            phoneVerified: jwt.phone_verified ?? false,
-            twoFactorEnabled: jwt.two_factor_enabled,
-            updatedAt: jwt.updated_at,
-        };
+            const userData = {
+                clerkId: jwt.clerk_user_id,
+                email: jwt.email,
+                firstName: jwt.first_name,
+                lastName: jwt.name.split(" ").slice(1).join(" "),
+                phoneNumber: jwt.phone_number,
+                emailVerified: jwt.email_verified,
+                phoneVerified: jwt.phone_verified ?? false,
+                twoFactorEnabled: jwt.two_factor_enabled,
+                updatedAt: jwt.updated_at,
+            };
 
-        let userId: string;
-        if (existingUser) {
-            await ctx.db.patch(existingUser._id, userData);
-            userId = existingUser._id;
-            await logAction(ctx, userId, "USER_UPDATED", `User ${jwt.email} updated`);
-        } else {
-            userId = await ctx.db.insert("users", userData);
-            await logAction(ctx, userId, "USER_CREATED", `User ${jwt.email} created`);
+            let userId: string;
+            if (existingUser) {
+                await ctx.db.patch(existingUser._id, userData);
+                userId = existingUser._id;
+                logger.info({ userId, action: "USER_UPDATED" }, "User updated");
+            } else {
+                userId = await ctx.db.insert("users", userData);
+                logger.info({ userId, action: "USER_CREATED" }, "User created");
+            }
+
+            await ctx.db.insert("auditLogs", {
+                userId,
+                action: existingUser ? "USER_UPDATED" : "USER_CREATED",
+                details: `User ${jwt.email} ${existingUser ? "updated" : "created"}`,
+                timestamp: new Date().toISOString(),
+            });
+
+            return userId;
+        } catch (error) {
+            logger.error({ error, jwt }, "Error creating/updating user");
+            throw new AppError("Failed to create/update user", 500);
         }
-
-        return userId;
     },
 });
 
 export const getUser = query({
     args: { clerkId: v.string() },
     handler: async (ctx, args) => {
-        const user = await ctx.db
-            .query("users")
-            .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
-            .unique();
+        try {
+            const user = await ctx.db
+                .query("users")
+                .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
+                .unique();
 
-        if (!user) {
-            throw new ConvexError("User not found");
+            if (!user) {
+                throw new AppError("User not found", 404);
+            }
+
+            return user;
+        } catch (error) {
+            logger.error({ error, clerkId: args.clerkId }, "Error fetching user");
+            throw error;
         }
-
-        return user;
-    },
-});
-
-export const getUserByEmail = query({
-    args: { email: v.string() },
-    handler: async (ctx, args) => {
-        const user = await ctx.db
-            .query("users")
-            .withIndex("by_email", (q) => q.eq("email", args.email))
-            .unique();
-
-        if (!user) {
-            throw new ConvexError("User not found");
-        }
-
-        return user;
     },
 });
