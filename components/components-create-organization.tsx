@@ -16,7 +16,6 @@ import { useState } from "react";
 import { useAction } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { useUser } from "@clerk/nextjs";
-import { CreateOrganization } from "clerk/nextjs";
 
 export function CreateOrganization() {
   const [name, setName] = useState("");
@@ -28,7 +27,7 @@ export function CreateOrganization() {
     if (!user) {
 
       try {
-        await createOrganization({ name, ownerId: user.id });
+        await createOrganization({ name, org_name: 'Organization' });
         setName("");
         alert("Organization created successfully!");
       } catch (error) {
