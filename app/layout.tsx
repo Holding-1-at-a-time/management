@@ -2,7 +2,7 @@
     * @description      : 
     * @author           : rrome
     * @group            : 
-    * @created          : 25/09/2024 - 12:12:35
+    * @created          : 25/09/2024 - 14:06:44
     * 
     * MODIFICATION LOG
     * - Version         : 1.0.0
@@ -10,29 +10,67 @@
     * - Author          : rrome
     * - Modification    : 
 **/
-// app/layout.tsx
-import { ClerkProvider } from '@clerk/nextjs'
-import { ConvexReactClient } from "convex/react";
-import { Toaster } from "@/components/ui/toaster"
-import ConvexClerkProvider from '@/ConvexClerkProvider';
 
-const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+import ConvexClerkProvider from "@/ConvexClerkProvider";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import type { Metadata } from "next";
+import localFont from "next/font/local";
+import { ClerkProviderWithConvex } from "@/components/components-clerk-provider-with-convex";
 
+
+/**
+ * Initializes local fonts for Geist Sans and Geist Mono.
+ */
+
+const geistSans = localFont({
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-geist-sans",
+});
+
+const geistMono = localFont({
+  src: "./fonts/GeistMonoVF.woff",
+  variable: "--font-geist-mono",
+});
+
+
+/**
+ * Represents metadata for the organization management with Clerk.
+ */
+export const metadata: Metadata = {
+  title: "Organization Management With Clerk",
+  description: "Mange your Organization with The Help from Clerk",
+};
+
+
+/**
+ * Renders the root layout component with Clerk authentication and custom fonts.
+ * 
+ * @param children - The child components to be rendered within the layout.
+ */
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body>
-          <ConvexClerkProvider {...convex}>
-            {children}
-          </ConvexClerkProvider>
-          <Toaster />
-        </body>
-      </html>
-    </ClerkProvider>
-  )
-}
+    <ClerkProviderWithConvex>
+        <html lang="en">
+          <body className={`${geistSans.variable} ${geistMono.variable}`}>
+            <header>
+              <SignedOut>
+                <SignInButton />
+              </SignedOut>
+              <SignedIn>
+                <UserButton />
+              </SignedIn>
+            </header>
+            <main>
+              <ConvexClerkProvider>
+                {children}
+              </ConvexClerkProvider>
+              </main>
+          </body>
+        </html>
+    </ClerkProviderWithConvex>
+  );
+};

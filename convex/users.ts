@@ -17,6 +17,41 @@ import { AppError } from "@/lib/errors";
 import logger from "../lib/logger";
 import { JWTPayload } from "@/types/jwt";
 
+
+
+/**
+ * Mutation to create or update a user in the database.
+ * 
+ * @param {Object} args - The arguments for the mutation.
+ * @param {Object} args.jwt - The JWT payload containing user information.
+ * @param {string} args.jwt.aud - Audience of the JWT.
+ * @param {string} args.jwt.name - Full name of the user.
+ * @param {string} args.jwt.email - Email address of the user.
+ * @param {string} [args.jwt.org_name] - Optional organization name.
+ * @param {string} [args.jwt.org_role] - Optional organization role.
+ * @param {string} [args.jwt.org_slug] - Optional organization slug.
+ * @param {string} [args.jwt.org_image] - Optional organization image URL.
+ * @param {string} [args.jwt.tenant_id] - Optional tenant ID.
+ * @param {string} args.jwt.first_name - First name of the user.
+ * @param {string} args.jwt.session_id - Session ID.
+ * @param {string} args.jwt.updated_at - Timestamp of the last update.
+ * @param {string} args.jwt.external_id - External ID.
+ * @param {string} [args.jwt.phone_number] - Optional phone number.
+ * @param {string} args.jwt.clerk_user_id - Clerk user ID.
+ * @param {string} [args.jwt.org_has_image] - Optional flag indicating if the organization has an image.
+ * @param {string} [args.jwt.session_actor] - Optional session actor.
+ * @param {boolean} args.jwt.email_verified - Flag indicating if the email is verified.
+ * @param {string[]} [args.jwt.org_permissions] - Optional array of organization permissions.
+ * @param {boolean} [args.jwt.phone_verified] - Optional flag indicating if the phone number is verified.
+ * @param {boolean} args.jwt.two_factor_enabled - Flag indicating if two-factor authentication is enabled.
+ * 
+ * @param {Object} ctx - The context object.
+ * @param {Object} ctx.db - The database context.
+ * 
+ * @returns {Promise<string>} The ID of the created or updated user.
+ * 
+ * @throws {AppError} If there is an error creating or updating the user.
+ */
 export const createOrUpdateUser = mutation({
     args: {
         jwt: v.object({
@@ -87,6 +122,21 @@ export const createOrUpdateUser = mutation({
     },
 });
 
+
+
+/**
+ * Retrieves a user from the database based on the provided clerk ID.
+ *
+ * @param {Object} args - The arguments object.
+ * @param {string} args.clerkId - The clerk ID of the user to retrieve.
+ * @returns {Promise<Object>} The user object if found.
+ * @throws {AppError} If the user is not found.
+ * @throws {Error} If there is an error fetching the user.
+ *
+ * @example
+ * const user = await getUser({ clerkId: '12345' });
+ * console.log(user);
+ */
 export const getUser = query({
     args: { clerkId: v.string() },
     handler: async (ctx, args) => {
