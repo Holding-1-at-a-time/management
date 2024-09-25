@@ -12,6 +12,7 @@
   "dependencies": {
     "@clerk/clerk-js": "^5.23.0",
     "@clerk/nextjs": "^5.6.2",
+    "@radix-ui/react-toast": "^1.2.1",
     "@types/jest": "^29.5.13",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
@@ -20,6 +21,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "lucide-react": "^0.445.0",
     "next": "15.0.0-rc.0",
+    "pino": "^9.4.0",
     "react": "19.0.0-rc-e4953922-20240919",
     "react-dom": "19.0.0-rc-e4953922-20240919",
     "tailwind-merge": "^2.5.2",
