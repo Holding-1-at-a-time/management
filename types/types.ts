@@ -1,15 +1,26 @@
+/**
+    * @description      : 
+    * @author           : rrome
+    * @group            : 
+    * @created          : 25/09/2024 - 08:31:42
+    * 
+    * MODIFICATION LOG
+    * - Version         : 1.0.0
+    * - Date            : 25/09/2024
+    * - Author          : rrome
+    * - Modification    : 
+**/
 import { v } from "convex/values";
+import { userValidator } from './types';
 
 // User entity
 export const userValidator = v.object({
     _id: v.id('users'),
-    userId: v.id('users'),
     name: v.string(),
     email: v.string(),
     createdAt: v.number(),
 });
-export type User = typeof userValidator.type;
-
+type User = userValidator.type;
 // PotentialClient entity
 export const potentialClientValidator = v.object({
     _id: v.id('potentialClient'),
