@@ -10,8 +10,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "@clerk/clerk-js": "^5.22.3",
-    "@clerk/nextjs": "^5.6.0",
+    "@clerk/clerk-js": "^5.23.0",
+    "@clerk/nextjs": "^5.6.2",
     "@types/jest": "^29.5.13",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
@@ -28,8 +28,8 @@
     "tslib": "2.7.0"
   },
   "devDependencies": {
-    "@types/node": "^22.6.1",
-    "@types/react": "^18.3.8",
+    "@types/node": "^22.7.0",
+    "@types/react": "^18.3.9",
     "@types/react-dom": "^18.3.0",
     "eslint": "^9.11.1",
     "eslint-config-next": "15.0.0-rc.0",

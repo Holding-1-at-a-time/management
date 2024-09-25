@@ -10,7 +10,7 @@
     * - Author          : rrome
     * - Modification    : 
 **/
-import { useAuth, Organization, OrganizationMembershipRole } from "@clerk/nextjs/server";
+import { Organization, OrganizationMembershipRole } from "@clerk/nextjs/server";
 
 /**
  * UserAuthInfo represents the user authentication information
@@ -19,7 +19,7 @@ export interface UserAuthInfo {
     userId: string;
     orgId: Organization["id"];
     orgRole: OrganizationMembershipRole;
-    orgPermissions: OrganizationPermission[];
+    orgPermissions: OrganizationPermissions[];
     tenantId: string;
     userInfo: UserInfo;
     organizationInfo: OrganizationInfo;
