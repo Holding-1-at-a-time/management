@@ -17,6 +17,7 @@ import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { ClerkProviderWithConvex } from "@/components/components-clerk-provider-with-convex";
+import { Children } from "react";
 
 
 /**
@@ -56,29 +57,28 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const { orgId } = auth();
-  const hasActiveOrganization = !!orgId;
 
-
-
-  return (
-    <ClerkProviderWithConvex>
-      <html lang="en">
-        <body className={`${geistSans.variable} ${geistMono.variable}`}>
-          <header>
-            <SignedOut>
-              <SignInButton />
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
-          </header>
-          <main>
-            <ConvexClerkProvider>
-              {children}
-            </ConvexClerkProvider>
-          </main>
-        </body>
-      </html>
-    </ClerkProviderWithConvex>
-  );
+  if (!orgId) {
+    return (
+      <ClerkProviderWithConvex>
+        <html lang="en">
+          <body className={`${geistSans.variable} ${geistMono.variable}`}>
+            <header>
+              <SignedOut>
+                <SignInButton />
+              </SignedOut>
+              <SignedIn>
+                <UserButton />
+              </SignedIn>
+            </header>
+            <main>
+              <ConvexClerkProvider>
+                {Children}
+              </ConvexClerkProvider>
+            </main>
+          </body>
+        </html>
+      </ClerkProviderWithConvex>
+    );
+  }
 };

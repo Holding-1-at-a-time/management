@@ -11,14 +11,12 @@
     * - Modification    : 
 **/
 // app/page.tsx
-import { auth, currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { api } from "../convex/_generated/api";
-import { OrganizationList } from "./components/OrganizationList";
-import { CreateOrganization } from "./components/CreateOrganization";
-import { SignIn, SignUp, UserButton } from "@clerk/nextjs";
+import { useAuth, SignIn, SignUp, UserButton, CreateOrganization, OrganizationList } from "@clerk/nextjs";
 
 export default async function Home() {
-  const { userId } = auth();
+  const { userId } = useAuth();
   const user = await currentUser();
 
   if (!userId || !user) {
@@ -27,15 +25,17 @@ export default async function Home() {
         <h1 className="text-4xl font-bold mb-8">Welcome to Our App</h1>
         <div className="space-y-4">
           <SignIn />
+          <UserButton />
           <SignUp />
+          <CreateOrganization />
+          <OrganizationList
+            hidePersonal={true}
+            afterCreateOrganizationUrl="/organization/:slug"
+            afterSelectPersonalUrl="/user/:id"
+            afterSelectOrganizationUrl="/organization/:slug"
+          />
         </div>
       </div>
     );
   }
-
-  return (
-    <div>page</div>
-  )
-}
-
-export default page
+};
