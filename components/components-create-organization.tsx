@@ -25,6 +25,8 @@ export function CreateOrganization() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
+      return;
+    }
 
       try {
         await createOrganization({ name, org_name: 'Organization' });

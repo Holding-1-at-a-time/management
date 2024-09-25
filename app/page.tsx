@@ -34,15 +34,8 @@ export default async function Home() {
   }
 
   return (
-    <main className="container mx-auto px-4 py-8">
-      <header className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Welcome, {user.firstName}!</h1>
-        <UserButton />
-      </header>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <OrganizationList userId={userId} />
-        <CreateOrganization userId={userId} />
-      </div>
-    </main>
-  );
+    <div>page</div>
+  )
 }
+
+export default page

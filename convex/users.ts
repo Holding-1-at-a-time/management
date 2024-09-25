@@ -122,21 +122,28 @@ export const createOrUpdateUser = mutation({
     },
 });
 
+export const createUser = mutation({
+    args: {
+        email: v.string(),
+        firstName: v.string(),
+        lastName: v.string(),
+        clerkId: v.string(),
+        tokenIdentifier: v.string(),
+    },
+    handler: async (ctx, args) => {
+        console.log(`createUser called with ${args.email} ${args.firstName} ${args.lastName} ${args.clerkId} ${args.tokenIdentifier}`);
+        return await ctx.db.insert("users", {
+            email: args.email,
+            firstName: args.firstName,
+            lastName: args.lastName,
+            clerkId: args.clerkId,
+            tokenIdentifier: "",
+            name: ""
+        });
 
+    },
+});
 
-/**
- * Retrieves a user from the database based on the provided clerk ID.
- *
- * @param {Object} args - The arguments object.
- * @param {string} args.clerkId - The clerk ID of the user to retrieve.
- * @returns {Promise<Object>} The user object if found.
- * @throws {AppError} If the user is not found.
- * @throws {Error} If there is an error fetching the user.
- *
- * @example
- * const user = await getUser({ clerkId: '12345' });
- * console.log(user);
- */
 export const getUser = query({
     args: { clerkId: v.string() },
     handler: async (ctx, args) => {
