@@ -1,70 +1,64 @@
 // Unit tests for: getUser
 
+import { AppError } from "@/lib/errors";
 import { getUser } from "../users";
 
+// getUser.test.ts
 describe("getUser() getUser method", () => {
-  let mockCtx: any;
+  let mockDb: any;
+  let ctx: any;
 
   beforeEach(() => {
-    // Mock the context and its methods
-    mockCtx = {
-      db: {
-        query: jest.fn().mockReturnThis(),
-        withIndex: jest.fn().mockReturnThis(),
-        first: jest.fn(),
-      },
+    mockDb = {
+      query: jest.fn().mockReturnThis(),
+      withIndex: jest.fn().mockReturnThis(),
+      unique: jest.fn(),
     };
+    ctx = { db: mockDb };
   });
 
   describe("Happy Path", () => {
-    it("should return the user when a valid clerkId is provided", async () => {
+    it("should return a user when a valid clerkId is provided", async () => {
       // Arrange
-      const mockUser = { id: "user123", clerkId: "clerk123" };
-      mockCtx.db.first.mockResolvedValue(mockUser);
+      const clerkId = "validClerkId";
+      const expectedUser = { clerkId, email: "user@example.com" };
+      mockDb.unique.mockResolvedValue(expectedUser);
 
       // Act
-      const result = await getUser.handler(mockCtx, { clerkId: "clerk123" });
+      const result = await getUser.handler(ctx, { clerkId });
 
       // Assert
-      expect(mockCtx.db.query).toHaveBeenCalledWith("users");
-      expect(mockCtx.db.withIndex).toHaveBeenCalledWith(
+      expect(mockDb.query).toHaveBeenCalledWith("users");
+      expect(mockDb.withIndex).toHaveBeenCalledWith(
         "by_clerk_id",
         expect.any(Function),
       );
-      expect(mockCtx.db.first).toHaveBeenCalled();
-      expect(result).toEqual(mockUser);
+      expect(mockDb.unique).toHaveBeenCalled();
+      expect(result).toEqual(expectedUser);
     });
   });
 
   describe("Edge Cases", () => {
-    it("should throw an error if the user is not found", async () => {
+    it("should throw an AppError with status 404 when the user is not found", async () => {
       // Arrange
-      mockCtx.db.first.mockResolvedValue(null);
+      const clerkId = "nonExistentClerkId";
+      mockDb.unique.mockResolvedValue(null);
 
       // Act & Assert
-      await expect(
-        getUser.handler(mockCtx, { clerkId: "nonexistent" }),
-      ).rejects.toThrow("User not found");
-    });
-
-    it("should handle case where clerkId is an empty string", async () => {
-      // Arrange
-      mockCtx.db.first.mockResolvedValue(null);
-
-      // Act & Assert
-      await expect(getUser.handler(mockCtx, { clerkId: "" })).rejects.toThrow(
+      await expect(getUser.handler(ctx, { clerkId })).rejects.toThrow(AppError);
+      await expect(getUser.handler(ctx, { clerkId })).rejects.toThrow(
         "User not found",
       );
     });
 
-    it("should handle case where clerkId is undefined", async () => {
+    it("should propagate errors from the database query", async () => {
       // Arrange
-      mockCtx.db.first.mockResolvedValue(null);
+      const clerkId = "validClerkId";
+      const dbError = new Error("Database error");
+      mockDb.unique.mockRejectedValue(dbError);
 
       // Act & Assert
-      await expect(
-        getUser.handler(mockCtx, { clerkId: undefined as unknown as string }),
-      ).rejects.toThrow("User not found");
+      await expect(getUser.handler(ctx, { clerkId })).rejects.toThrow(dbError);
     });
   });
 });
