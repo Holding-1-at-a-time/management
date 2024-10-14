@@ -1,42 +1,29 @@
-"use client";
-
-import { api } from "@/convex/_generated/api";
-import { UserProfile, useUser } from "@clerk/nextjs";
-import { useQuery, useMutation } from "convex/react";
+"use client"
 import { useState } from 'react';
+import { UserProfile } from '@clerk/nextjs';
 
 export default function UserProfilePage() {
-    const { user } = useUser(); // Retrieve the current user
-    const userId = user ? user.id : null; // Get the user ID if available
-
-    const userProfile = useQuery(api.users.getUser, { userId }); // Use the dynamic user ID
-    const updateProfile = useMutation(api.users.updateUserProfile);
-    const [phoneNumber, setPhoneNumber] = useState<string | undefined>(user?.phone || undefined);
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [updateSuccess, setUpdateSuccess] = useState(false);
     const [updateError, setUpdateError] = useState<Error | null>(null);
 
-    const handleUpdateProfile = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setUpdateSuccess(false);
-        setUpdateError(null);
-
+    const handleUpdateProfile = async (event: React.FormEvent) => {
+        event.preventDefault();
         try {
-            await updateProfile({ userId: "current-user-id", phoneNumber });
+            await fetch('/api/update-profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ phoneNumber }),
+            });
             setUpdateSuccess(true);
+            setUpdateError(null);
         } catch (error) {
-            setUpdateError(new Error("Failed to update profile. Please try again."));
-            console.error("Profile update error:", error);
+            setUpdateSuccess(false);
+            setUpdateError(error instanceof Error ? error : new Error('An unknown error occurred'));
         }
-
-        try {
-            await updateProfile({ userId: "current-user-id", phoneNumber });
-            setUpdateSuccess(true);
-        } catch (error) {
-            console.error("Failed to update profile:", error);
-            setUpdateError(error as Error);
-            }
-        }
-    }
+    };
 
     return (
         <div className="container mx-auto py-10">
@@ -73,4 +60,3 @@ export default function UserProfilePage() {
         </div>
     );
 }
-
