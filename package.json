@@ -28,7 +28,7 @@
     "tslib": "2.7.0"
   },
   "devDependencies": {
-    "@types/react": "^18.3.11",
+    "@types/react": "^19.0.0",
     "@types/node": "^22.7.0",
     "@types/react-dom": "^18.3.0",
     "eslint": "^9.11.1",
