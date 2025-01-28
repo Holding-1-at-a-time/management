@@ -10,16 +10,13 @@
     "test": "jest"
   },
   "dependencies": {
-    "@clerk/clerk-js": "^5.23.0",
-    "@clerk/nextjs": "^5.6.2",
-    "@radix-ui/react-toast": "^1.2.1",
-    "@types/jest": "^29.5.13",
+    "@clerk/nextjs": "^5.7.2",
+
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
-    "convex": "^1.16.2",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0",
-    "lucide-react": "^0.445.0",
+    "convex": "^1.16.5",
+    "lucide-react": "^0.446.0",
+
     "next": "15.0.0-rc.0",
     "pino": "^9.4.0",
     "react": "19.0.0-rc-e4953922-20240919",
@@ -31,10 +28,9 @@
     "tslib": "2.7.0"
   },
   "devDependencies": {
+    "@types/react": "^19.0.0",
     "@types/node": "^22.7.0",
-    "@types/react": "^18.3.9",
     "@types/react-dom": "^18.3.0",
-    "eslint": "^9.11.1",
     "eslint": "^9.11.1",
     "eslint-config-next": "15.0.0-rc.0",
     "postcss": "^8.4.47",
